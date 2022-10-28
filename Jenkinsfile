@@ -24,6 +24,8 @@ pipeline {
                 container('kubectl') {
                     script {
                         sh 'kubectl apply -f manifest.yaml'
+                        sh 'kubectl rollout restart deployment -n web-go web-go'
+                        sh 'kubectl rollout status deployment -n web-go web-go'
                     }
                 }
             }
