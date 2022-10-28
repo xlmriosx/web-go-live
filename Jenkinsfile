@@ -10,8 +10,8 @@ pipeline {
             steps {
                 container('podman') {
                     script {
-                        sh 'podman build -t docker.io/nelsonyaccuzzi/web-go:$BUILD_NUMBER -f Dockerfile'
-                        sh 'podman login docker.io -u $DOCKERHUB_CREDS_USR -p DOCKERHUB_CREDS_PSW'
+                        //sh 'podman build -t docker.io/nelsonyaccuzzi/web-go:$BUILD_NUMBER -f Dockerfile'
+                        sh 'podman login docker.io -u $DOCKERHUB_CREDS_USR -p $DOCKERHUB_CREDS_PSW'
                         sh 'podman push docker.io/nelsonyaccuzzi/web-go:$BUILD_NUMBER'
                     }
                 }
