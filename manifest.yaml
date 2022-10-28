@@ -1,0 +1,102 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: web-go
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-go
+  namespace: web-go
+  labels:
+    app: web-go
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: web-go
+  template:
+    metadata:
+      labels:
+        app: web-go
+    spec:
+      containers:
+      - image: nelsonyaccuzzi/web-go:latest
+        name: web-go
+        imagePullPolicy: Always
+        ports:
+        - name: http
+          containerPort: 8080
+        env:
+          - name: FOO
+            valueFrom:
+              configMapKeyRef:
+                 name: web-go
+                 key: FOO
+          - name: BAR
+            valueFrom:
+              configMapKeyRef:
+                 name: web-go
+                 key: BAR
+          - name: SUPERSECRETUSER
+            valueFrom:
+              secretKeyRef:
+                 name: web-go
+                 key: username
+          - name: SUPERSECRETPASS
+            valueFrom:
+              secretKeyRef:
+                 name: web-go
+                 key: password
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: web-go
+  namespace: web-go
+spec:
+  selector:
+    app: web-go
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 8080
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: web-go
+  namespace: web-go
+data:
+  FOO: "Esta es la variable FOO"
+  BAR: "Esta es la variable BAR"
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: web-go
+  namespace: web-go
+type: Opaque
+data:
+  username: ZGV2b3Bz
+  password: ZGV2b3BzMjAyMA==
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: web-go
+  namespace: web-go
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  ingressClassName: nginx
+  rules:
+  - http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: web-go
+            port:
+              number: 80
