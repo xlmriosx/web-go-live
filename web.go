@@ -13,6 +13,10 @@ func main() {
 
 func HelloServer(w http.ResponseWriter, r *http.Request) {
 	 fmt.Fprintf(w, "Devops 2023\n")
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
 	 fmt.Fprintf(w, "Host: %s\n", os.Getenv("HOSTNAME"))
 
 	 fmt.Fprintf(w, "\n")

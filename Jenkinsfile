@@ -3,6 +3,7 @@ pipeline {
     
     environment {
         DOCKERHUB_CREDS = credentials('dockerhub-credentials')
+        REPOSITORY = "nelsonyaccuzzi/web-go"
     }
 
     stages {
@@ -17,7 +18,7 @@ pipeline {
             steps {
                 container('podman') {
                     script {
-                        sh 'podman build -t docker.io/nelsonyaccuzzi/web-go:$BUILD_NUMBER -f Dockerfile'
+                        sh 'podman build -t docker.io/$REPOSITORY:$BUILD_NUMBER -f Dockerfile'
                     }
                 }
             }
@@ -29,11 +30,11 @@ pipeline {
             steps {
                 container('podman') {
                     script {
-                        sh 'podman build -t docker.io/nelsonyaccuzzi/web-go:$BUILD_NUMBER -f Dockerfile'
+                        sh 'podman build -t docker.io/$REPOSITORY:$BUILD_NUMBER -f Dockerfile'
                         sh 'podman login docker.io -u $DOCKERHUB_CREDS_USR -p $DOCKERHUB_CREDS_PSW'
-                        sh 'podman tag docker.io/nelsonyaccuzzi/web-go:$BUILD_NUMBER docker.io/nelsonyaccuzzi/web-go:latest'
-                        sh 'podman push docker.io/nelsonyaccuzzi/web-go:$BUILD_NUMBER'
-                        sh 'podman push docker.io/nelsonyaccuzzi/web-go:latest'
+                        sh 'podman tag docker.io/$REPOSITORY:$BUILD_NUMBER docker.io/$REPOSITORY:latest'
+                        sh 'podman push docker.io/$REPOSITORY:$BUILD_NUMBER'
+                        sh 'podman push docker.io/$REPOSITORY:latest'
                     }
                 }
             }
